@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant External</title>
+    <style>
+        :root {
+            --bg-color: #0b071a;
+            --panel-bg: #130d2a;
+            --primary-purple: #8a2be2;
+            --neon-purple: #bc13fe;
+            --text-color: #e0dcf0;
+            --text-muted: #7b7393;
+            --success-green: #00ff88;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #241445 0%, #0b071a 100%);
+        }
+
+        /* Container หลัก */
+        .wrapper {
+            position: relative;
+            width: 400px;
+            min-height: 550px;
+        }
+
+        /* สไตล์กล่อง Panel */
+        .panel {
+            background: var(--panel-bg);
+            border: 2px solid var(--primary-purple);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3), inset 0 0 15px rgba(138, 43, 226, 0.1);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: all 0.5s ease;
+        }
+
+        .hidden {
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+            pointer-events: none;
+        }
+
+        /* --- หน้า LOGIN --- */
+        .login-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #090514;
+            border: 1px solid var(--primary-purple);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(45deg, var(--primary-purple), var(--neon-purple));
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 0 15px var(--neon-purple);
+            transform: translateY(-2px);
+        }
+
+        .login-status {
+            text-align: center;
+            color: #ff4a4a;
+            font-size: 14px;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+
+        /* --- หน้า MAIN MENU Panel --- */
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 8px var(--neon-purple);
+        }
+
+        .status-badge {
+            font-size: 11px;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success-green);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--success-green);
+            text-transform: uppercase;
+        }
+
+        /* สไตล์แถวตั้งค่า (Feature Row) */
+        .feature-row {
+            background: rgba(9, 5, 20, 0.6);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .feature-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .feature-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ปุ่มสวิตช์เปิด/ปิด (Toggle Switch) */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-toggle {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #241b45;
+            transition: .3s;
+            border-radius: 22px;
+            border: 1px solid var(--primary-purple);
+        }
+
+        .slider-toggle:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--text-muted);
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-toggle {
+            background-color: var(--primary-purple);
+            border-color: var(--neon-purple);
+        }
+
+        input:checked + .slider-toggle:before {
+            transform: translateX(22px);
+            background-color: #fff;
+            box-shadow: 0 0 8px #fff;
+        }
+
+        /* หลอดปรับเปอร์เซ็นต์ (Range Slider) */
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #090514;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--neon-purple);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--neon-purple);
+            transition: 0.1s;
+        }
+
+        .range-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .range-value {
+            font-size: 12px;
+            color: var(--neon-purple);
+            font-weight: bold;
+            min-width: 35px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        
+        <!-- 1. หน้า LOGIN -->
+        <div id="loginPage" class="panel">
+            <div class="login-title">Valorant External</div>
+            <div class="input-group">
+                <label>License Key</label>
+                <input type="password" id="licenseKey" placeholder="ใส่รหัสผ่านตรงนี้...">
+            </div>
+            <button class="btn-submit" onclick="handleLogin()">Login</button>
+            <div class="login-status" id="loginStatus"></div>
+        </div>
+
+        <!-- 2. หน้า MAIN PANEL -->
+        <div id="mainPanel" class="panel hidden">
+            <div class="panel-header">
+                <div class="panel-title">Valorant External</div>
+                <div class="status-badge">Active</div>
+            </div>
+
+            <!-- Feature 1: Mouse Response -->
+            <div class="feature-row">
+                <div class="feature-info">
+                    <div class="feature-name">Aiming Assist</div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider-toggle"></span>
+                    </label>
+                </div>
+                <div class="range-container">
+                    <input type="range" class="range-slider" min="0" max="100" value="75" oninput="updateValue(this)">
+                    <span class="range-value">75%</span>
+                </div>
+            </div>
+
+            <!-- Feature 2: Stabilizer -->
+            <div class="feature-row">
+                <div class="feature-info">
+                    <div class="feature-name">Reduce Recoil</div>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider-toggle"></span>
+                    </label>
+                </div>
+                <div class="range-container">
+                    <input type="range" class="range-slider" min="0" max="100" value="50" oninput="updateValue(this)">
+                    <span class="range-value">50%</span>
+                </div>
+            </div>
+
+            <!-- Feature 3: FOV Renderer -->
+            <div class="feature-row">
+                <div class="feature-info">
+                    <div class="feature-name">Expand Hitbox</div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider-toggle"></span>
+                    </label>
+                </div>
+                <div class="range-container">
+                    <input type="range" class="range-slider" min="0" max="100" value="90" oninput="updateValue(this)">
+                    <span class="range-value">90%</span>
+                </div>
+            </div>
+
+            <!-- Feature 4: Network Latency -->
+            <div class="feature-row">
+                <div class="feature-info">
+                    <div class="feature-name">Anti lag</div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider-toggle"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Feature 5: Rendering Scaling -->
+            <div class="feature-row">
+                <div class="feature-info">
+                    <div class="feature-name">Enemies on map</div>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider-toggle"></span>
+                    </label>
+                </div>
+                <div class="range-container">
+                    <input type="range" class="range-slider" min="0" max="100" value="0" oninput="updateValue(this)">
+                    <span class="range-value">0%</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ฟังก์ชันอัปเดตตัวเลขเปอร์เซ็นต์ของ Slider
+        function updateValue(slider) {
+            const valueSpan = slider.nextElementSibling;
+            valueSpan.innerText = slider.value + '%';
+        }
+
+        // ฟังก์ชันตรวจเช็ครหัสผ่านตอน Login
+        function handleLogin() {
+            const keyInput = document.getElementById('licenseKey').value;
+            const statusDiv = document.getElementById('loginStatus');
+            const loginPage = document.getElementById('loginPage');
+            const mainPanel = document.getElementById('mainPanel');
+
+            // ตั้งรหัสผ่านขำๆ ไว้ตรงนี้ (เปลี่ยนได้ตามใจชอบ)
+            if (keyInput === '1234' || keyInput.toLowerCase() === 'admin') {
+                statusDiv.style.color = '#00ff88';
+                statusDiv.innerText = 'Login Success! Loading...';
+                
+                // หน่วงเวลา 1 วินาทีให้ดูเหมือนระบบกำลังโหลดจริงๆ ก่อนสลับหน้า
+                setTimeout(() => {
+                    loginPage.classList.add('hidden');
+                    mainPanel.classList.remove('hidden');
+                }, 1000);
+            } else {
+                statusDiv.style.color = '#ff4a4a';
+                statusDiv.innerText = 'Invalid License Key! Try again.';
+            }
+        }
+    </script>
+</body>
+</html>
